@@ -7,11 +7,44 @@
 //
 
 #import "FNLineChart.h"
+#import "FNShapeLayer.h"
+
+#pragma mark - Custom CALayer Delegate
+/*
+@interface LayerDelegate : NSObject
+{
+    id _target;
+}
+- (id) initWithView:(id)target;
+@end
+
+@implementation LayerDelegate
+
+- (id) initWithView:(id)target
+{
+    self = [super init];
+    if (self) {
+        _target = target;
+    }
+    return self;
+}
+
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+    [_target drawLayer:layer inContext:ctx];
+}
+
+@end
+ */
 
 @interface FNLineChart ()
+{
+//    LayerDelegate *layerDelegate;
+}
 @property (nonatomic, assign) CGFloat chartHeight;
 @property (nonatomic, assign) CGFloat chartWidth;
 @property (nonatomic, assign) CGFloat scale;
+@property (nonatomic, strong) NSMutableArray *layerArray;
 @end
 
 @implementation FNLineChart
@@ -92,19 +125,27 @@
         }
     }
     
+    if (!_layerArray) {
+        _layerArray = [[NSMutableArray alloc]init];
+    }else{
+        [_layerArray removeAllObjects];
+    }
+    
+    
+
     
     for (int j = 0; j < _verticalLeftValus.count; j++) {
         UIBezierPath* path = [UIBezierPath bezierPath];
         NSArray *array = _verticalLeftValus[j];
         for (int i = 0; i < array.count; i++) {
             CGFloat value = [array[i] floatValue];
+            CGPoint point = CGPointMake(_leftMargin + i * (_chartWidth / (_horizontalStep - 1)), CGRectGetHeight(self.bounds) - _bottomtMargin - value * _scale);
             if (i > 0) {
-//                CGContextAddLineToPoint(ctx, _leftMargin + i * (_chartWidth / (_horizontalStep - 1)), CGRectGetHeight(self.bounds) - _bottomtMargin - value * _scale);
-                [path addLineToPoint:CGPointMake(_leftMargin + i * (_chartWidth / (_horizontalStep - 1)), CGRectGetHeight(self.bounds) - _bottomtMargin - value * _scale)];
+                [path addLineToPoint:point];
             }else{
-//                CGContextMoveToPoint(ctx, _leftMargin, CGRectGetHeight(self.bounds) - _bottomtMargin - value * _scale);
-                [path moveToPoint:CGPointMake(_leftMargin, CGRectGetHeight(self.bounds) - _bottomtMargin - value * _scale)];
+                [path moveToPoint:point];
             }
+//            [path addArcWithCenter:point radius:2 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
         }
         
         UIColor *color = _leftLineColors[j];
@@ -114,18 +155,25 @@
         CGFloat duration = [_leftLineAnimationDuration[j] floatValue];
         duration = (duration == 0 ? 2 : duration);
         
+        
+//        layerDelegate = [[LayerDelegate alloc]initWithView:self];
+        
         CAShapeLayer *pathLayer = [CAShapeLayer layer];
-//        pathLayer.backgroundColor = [UIColor orangeColor].CGColor;
+        pathLayer.backgroundColor = [UIColor clearColor].CGColor;
         pathLayer.frame = self.bounds;
         pathLayer.bounds = self.bounds;
         pathLayer.path = path.CGPath;
         pathLayer.strokeColor = color.CGColor;
-        pathLayer.fillColor = nil;
+        pathLayer.fillColor = [UIColor clearColor].CGColor;
+//        pathLayer.fillRule = kCAFillRuleNonZero;
         pathLayer.lineWidth = width;
+//        pathLayer.delegate = layerDelegate;
         pathLayer.lineJoin = kCALineJoinRound;
         pathLayer.lineCap = kCALineCapRound;
         
+        [_layerArray addObject:pathLayer];
         [self.layer addSublayer:pathLayer];
+        
         
         CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
         pathAnimation.duration = duration;
@@ -134,8 +182,23 @@
         pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];
         [pathLayer addAnimation:pathAnimation forKey:@"path"];
         
+        
 //        CGContextStrokePath(ctx);
     }
+    
+    /*
+    for (int j = 0; j < _verticalLeftValus.count; j++) {
+        NSArray * array = [_verticalLeftValus objectAtIndex:j];
+        for (int i = 0; i < array.count; i++) {
+            CGFloat value = [array[i] floatValue];
+            CGPoint point = CGPointMake(_leftMargin + i * (_chartWidth / (_horizontalStep - 1)), CGRectGetHeight(self.bounds) - _bottomtMargin - value * _scale);
+            
+            CGContextAddArc(ctx, point.x, point.y, 2, 0, M_PI * 2, YES);
+            CGContextSetFillColorWithColor(ctx, [UIColor redColor].CGColor);
+            CGContextFillPath(ctx);
+        }
+    }
+     */
 }
 
 - (void)setHorizontalTitles:(NSArray *)horizontalTitles
@@ -204,5 +267,16 @@
     [self setNeedsDisplay];
 
 }
+
+/*
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+    
+    
+ 
+}
+*/
+ 
+
 
 @end
