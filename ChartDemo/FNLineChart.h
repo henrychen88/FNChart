@@ -36,10 +36,13 @@
 @property (nonatomic, strong) NSArray *leftLineWidths;//线条宽度 CGFloat 类型
 @property (nonatomic, strong) NSArray *leftLineAnimationDuration;//线条动画时间 CGFloat类型
 
-//是否有2个Y轴
-@property (nonatomic) BOOL hasTwoVerticalAxis;
+//数值以右边Y轴为准的线条相关属性
+@property (nonatomic, strong) NSArray *rightLineColors;//线条颜色 UIColor 对象
+@property (nonatomic, strong) NSArray *rightLineWidths;//线条宽度 CGFloat 类型
+@property (nonatomic, strong) NSArray *rightLineAnimationDuration;//线条动画时间 CGFloat类型
 
 @property (nonatomic, strong) NSArray *horizontalTitles;
 @property (nonatomic, strong) NSArray *verticalLeftValus;
+@property (nonatomic, strong) NSArray *verticalRightValus;
 
 @end

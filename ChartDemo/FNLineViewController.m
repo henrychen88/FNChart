@@ -27,6 +27,7 @@
     chart.leftLineAnimationDuration = @[@(2), @3];
     chart.verticalLeftValus = @[@[@(0.1), @(3), @(0.6), @(8), @(5), @(1.3), @(4), @(0)],
                                                 @[@(6), @(4), @(5), @(2), @(0), @(4), @(8), @(6)]];
+        chart.verticalRightValus = @[@[@(60), @(30), @(100), @(14), @(50), @(10), @(80), @(140)]];
     [self.view addSubview:chart];
 }
 

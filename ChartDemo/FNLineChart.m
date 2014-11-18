@@ -43,7 +43,7 @@
 }
 @property (nonatomic, assign) CGFloat chartHeight;
 @property (nonatomic, assign) CGFloat chartWidth;
-@property (nonatomic, assign) CGFloat scale;
+@property (nonatomic, assign) CGFloat leftScale, rightScale;
 @property (nonatomic, strong) NSMutableArray *layerArray;
 @end
 
@@ -62,10 +62,9 @@
 - (void)setDefaultParameters
 {
     _leftMargin = 25;
-    _rightMargin = 15;
+    _rightMargin = 25;
     _topMargin = 5;
     _bottomtMargin = 15;
-    _hasTwoVerticalAxis = NO;
     _axisLineColor = [UIColor colorWithWhite:0.7 alpha:1.0];
     _innerLineColor = [UIColor colorWithWhite:0.9 alpha:1.0];
     
@@ -95,6 +94,9 @@
     CGContextMoveToPoint(ctx, _leftMargin, _topMargin);
     CGContextAddLineToPoint(ctx, _leftMargin, _topMargin + _chartHeight);
     CGContextAddLineToPoint(ctx, _leftMargin + _chartWidth, _topMargin + _chartHeight);
+    if (_verticalRightValus.count> 0) {
+        CGContextAddLineToPoint(ctx, _leftMargin + _chartWidth, _topMargin);
+    }
     CGContextSetStrokeColorWithColor(ctx, _axisLineColor.CGColor);
     CGContextSetLineWidth(ctx, _axisLineWidth);
     CGContextStrokePath(ctx);
@@ -134,54 +136,108 @@
     
 
     
-    for (int j = 0; j < _verticalLeftValus.count; j++) {
-        UIBezierPath* path = [UIBezierPath bezierPath];
-        NSArray *array = _verticalLeftValus[j];
-        for (int i = 0; i < array.count; i++) {
-            CGFloat value = [array[i] floatValue];
-            CGPoint point = CGPointMake(_leftMargin + i * (_chartWidth / (_horizontalStep - 1)), CGRectGetHeight(self.bounds) - _bottomtMargin - value * _scale);
-            if (i > 0) {
-                [path addLineToPoint:point];
-            }else{
-                [path moveToPoint:point];
+    
+    {
+        for (int j = 0; j < _verticalLeftValus.count; j++) {
+            UIBezierPath* path = [UIBezierPath bezierPath];
+            NSArray *array = _verticalLeftValus[j];
+            for (int i = 0; i < array.count; i++) {
+                CGFloat value = [array[i] floatValue];
+                CGPoint point = CGPointMake(_leftMargin + i * (_chartWidth / (_horizontalStep - 1)), CGRectGetHeight(self.bounds) - _bottomtMargin - value * _leftScale);
+                if (i > 0) {
+                    [path addLineToPoint:point];
+                }else{
+                    [path moveToPoint:point];
+                }
+                //            [path addArcWithCenter:point radius:2 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
             }
-//            [path addArcWithCenter:point radius:2 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
+            
+            UIColor *color = _leftLineColors[j];
+            color = (color ? color : [UIColor blackColor]);
+            CGFloat width = [_leftLineWidths[j] floatValue];
+            width = (width == 0 ? 2 : width);
+            CGFloat duration = [_leftLineAnimationDuration[j] floatValue];
+            duration = (duration == 0 ? 2 : duration);
+            
+            
+            //        layerDelegate = [[LayerDelegate alloc]initWithView:self];
+            
+            CAShapeLayer *pathLayer = [CAShapeLayer layer];
+            pathLayer.backgroundColor = [UIColor clearColor].CGColor;
+            pathLayer.frame = self.bounds;
+            pathLayer.bounds = self.bounds;
+            pathLayer.path = path.CGPath;
+            pathLayer.strokeColor = color.CGColor;
+            pathLayer.fillColor = [UIColor clearColor].CGColor;
+            //        pathLayer.fillRule = kCAFillRuleNonZero;
+            pathLayer.lineWidth = width;
+            //        pathLayer.delegate = layerDelegate;
+            pathLayer.lineJoin = kCALineJoinRound;
+            pathLayer.lineCap = kCALineCapRound;
+            
+            [_layerArray addObject:pathLayer];
+            [self.layer addSublayer:pathLayer];
+            
+            
+            CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+            pathAnimation.duration = duration;
+            pathAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+            pathAnimation.fromValue = [NSNumber numberWithFloat:0.0f];
+            pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];
+            [pathLayer addAnimation:pathAnimation forKey:@"path"];
         }
         
-        UIColor *color = _leftLineColors[j];
-        color = (color ? color : [UIColor blackColor]);
-        CGFloat width = [_leftLineWidths[j] floatValue];
-        width = (width == 0 ? 2 : width);
-        CGFloat duration = [_leftLineAnimationDuration[j] floatValue];
-        duration = (duration == 0 ? 2 : duration);
-        
-        
-//        layerDelegate = [[LayerDelegate alloc]initWithView:self];
-        
-        CAShapeLayer *pathLayer = [CAShapeLayer layer];
-        pathLayer.backgroundColor = [UIColor clearColor].CGColor;
-        pathLayer.frame = self.bounds;
-        pathLayer.bounds = self.bounds;
-        pathLayer.path = path.CGPath;
-        pathLayer.strokeColor = color.CGColor;
-        pathLayer.fillColor = [UIColor clearColor].CGColor;
-//        pathLayer.fillRule = kCAFillRuleNonZero;
-        pathLayer.lineWidth = width;
-//        pathLayer.delegate = layerDelegate;
-        pathLayer.lineJoin = kCALineJoinRound;
-        pathLayer.lineCap = kCALineCapRound;
-        
-        [_layerArray addObject:pathLayer];
-        [self.layer addSublayer:pathLayer];
-        
-        
-        CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-        pathAnimation.duration = duration;
-        pathAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        pathAnimation.fromValue = [NSNumber numberWithFloat:0.0f];
-        pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];
-        [pathLayer addAnimation:pathAnimation forKey:@"path"];
-        
+        {
+            for (int j = 0; j < _verticalRightValus.count; j++) {
+                UIBezierPath* path = [UIBezierPath bezierPath];
+                NSArray *array = _verticalRightValus[j];
+//                path.flatness = 0.1;
+                for (int i = 0; i < array.count; i++) {
+                    CGFloat value = [array[i] floatValue];
+                    CGPoint point = CGPointMake(_leftMargin + i * (_chartWidth / (_horizontalStep - 1)), CGRectGetHeight(self.bounds) - _bottomtMargin - value * _rightScale);
+                    if (i > 0) {
+                        [path addLineToPoint:point];
+                    }else{
+                        [path moveToPoint:point];
+                    }
+                    //            [path addArcWithCenter:point radius:2 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
+                }
+                
+                UIColor *color = _rightLineColors[j];
+                color = (color ? color : [UIColor blackColor]);
+                CGFloat width = [_rightLineWidths[j] floatValue];
+                width = (width == 0 ? 2 : width);
+                CGFloat duration = [_rightLineAnimationDuration[j] floatValue];
+                duration = (duration == 0 ? 2 : duration);
+                
+                
+                //        layerDelegate = [[LayerDelegate alloc]initWithView:self];
+                
+                CAShapeLayer *pathLayer = [CAShapeLayer layer];
+                pathLayer.backgroundColor = [UIColor clearColor].CGColor;
+                pathLayer.frame = self.bounds;
+                pathLayer.bounds = self.bounds;
+                pathLayer.path = path.CGPath;
+                pathLayer.strokeColor = color.CGColor;
+                pathLayer.fillColor = [UIColor clearColor].CGColor;
+                //        pathLayer.fillRule = kCAFillRuleNonZero;
+                pathLayer.lineWidth = width;
+                //        pathLayer.delegate = layerDelegate;
+                pathLayer.lineJoin = kCALineJoinRound;
+                pathLayer.lineCap = kCALineCapRound;
+                
+                [_layerArray addObject:pathLayer];
+                [self.layer addSublayer:pathLayer];
+                
+                
+                CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+                pathAnimation.duration = duration;
+                pathAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+                pathAnimation.fromValue = [NSNumber numberWithFloat:0.0f];
+                pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];
+                [pathLayer addAnimation:pathAnimation forKey:@"path"];
+            }
+        }
         
 //        CGContextStrokePath(ctx);
     }
@@ -225,31 +281,7 @@
 {
     _verticalLeftValus = verticalLeftValus;
     
-    CGFloat max = -MAXFLOAT;
-    for (NSArray *array in verticalLeftValus) {
-        for (NSNumber *number in array) {
-            CGFloat value = number.floatValue;
-            if (value > max) {
-                max = value;
-            }
-        }
-    }
-    
-    if (max >= _verticalLeftStep) {
-        max = ceilf(max / _verticalLeftStep) * _verticalLeftStep;
-    }else if (max > 1){
-        NSInteger temp = (NSInteger)(floor(_verticalLeftStep / ceilf(max)));
-        max = _verticalLeftStep * 1.0f / temp;
-    }else{
-        NSInteger temp = max * 10;
-        if (temp >= _verticalLeftStep) {
-            temp = ceilf(temp * 1.0f / _verticalLeftStep) * _verticalLeftStep;
-        }else{
-            NSInteger t = (NSInteger)(floor(_verticalLeftStep / temp));
-            temp = _verticalLeftStep / t;
-        }
-        max = temp / 10.0;
-    }
+    CGFloat max = [self getMaxFromArray:verticalLeftValus withStep:_verticalLeftStep];
     
     CGFloat gap = max / _verticalLeftStep;
     CGFloat originY = _topMargin + _chartHeight - 10;
@@ -262,11 +294,65 @@
         originY -= (_chartHeight / (_verticalLeftStep));
     }
     
-    _scale = _chartHeight / max;
+    _leftScale = _chartHeight / max;
     
     [self setNeedsDisplay];
-
+    
 }
+
+- (void)setVerticalRightValus:(NSArray *)verticalRightValus
+{
+    _verticalRightValus = verticalRightValus;
+    _verticalRightStep = _verticalLeftStep;
+    CGFloat max = [self getMaxFromArray:verticalRightValus withStep:_verticalRightStep];
+    
+    CGFloat gap = max / _verticalRightStep;
+    CGFloat originY = _topMargin + _chartHeight - 10;
+    for (int i = 0; i <= _verticalLeftStep; i++) {
+        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.bounds) - _rightMargin +2, originY, _rightMargin - 2, 15)];
+        label.font = [UIFont systemFontOfSize:10];
+        label.text = [NSString stringWithFormat:@"%g", i * gap];
+        [self addSubview:label];
+        originY -= (_chartHeight / (_verticalRightStep));
+    }
+    
+    _rightScale = _chartHeight / max;
+    
+    [self setNeedsDisplay];
+    
+}
+
+- (CGFloat)getMaxFromArray:(NSArray *)array withStep:(int)step
+{
+    CGFloat max = -MAXFLOAT;
+    for (NSArray *arr in array) {
+        for (NSNumber *number in arr) {
+            CGFloat value = number.floatValue;
+            if (value > max) {
+                max = value;
+            }
+        }
+    }
+    
+    if (max >= step) {
+        max = ceilf(max / step) * step;
+    }else if (max > 1){
+        NSInteger temp = (NSInteger)(floor(step / ceilf(max)));
+        max = step * 1.0f / temp;
+    }else{
+        NSInteger temp = max * 10;
+        if (temp >= step) {
+            temp = ceilf(temp * 1.0f / step) * step;
+        }else{
+            NSInteger t = (NSInteger)(floor(step / temp));
+            temp = step / t;
+        }
+        max = temp / 10.0;
+    }
+    
+    return max;
+}
+
 
 /*
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
