@@ -6,7 +6,7 @@
 //  Copyright (c) 2014年 ichint. All rights reserved.
 //
 
-#import "FNShapeLayer.h"
+#import "FNLayer.h"
 
 #pragma mark - Custom CALayer Delegate
 

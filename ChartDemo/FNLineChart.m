@@ -7,7 +7,7 @@
 //
 
 #import "FNLineChart.h"
-#import "FNShapeLayer.h"
+#import "FNLayer.h"
 
 #pragma mark - Custom CALayer Delegate
 /*
