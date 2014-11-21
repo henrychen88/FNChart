@@ -59,7 +59,7 @@
 		BA1744731A1214350080C026 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA1744721A1214350080C026 /* QuartzCore.framework */; };
 		BA1D6DDD1A158B540010B388 /* FNLineChart.m in Sources */ = {isa = PBXBuildFile; fileRef = BA1D6DDC1A158B540010B388 /* FNLineChart.m */; };
 		BA1D6DE01A1596CB0010B388 /* FNLineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA1D6DDF1A1596CB0010B388 /* FNLineViewController.m */; };
-		BA6082B21A1ED0FF00BDA5BD /* FNLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6082B11A1ED0FF00BDA5BD /* FNLayer.m */; };
+		BA6082B21A1ED0FF00BDA5BD /* FNLayer1.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6082B11A1ED0FF00BDA5BD /* FNLayer1.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -268,8 +268,8 @@
 		BA1D6DDC1A158B540010B388 /* FNLineChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNLineChart.m; sourceTree = "<group>"; };
 		BA1D6DDE1A1596CB0010B388 /* FNLineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNLineViewController.h; sourceTree = "<group>"; };
 		BA1D6DDF1A1596CB0010B388 /* FNLineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNLineViewController.m; sourceTree = "<group>"; };
-		BA6082B01A1ED0FF00BDA5BD /* FNLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNLayer.h; sourceTree = "<group>"; };
-		BA6082B11A1ED0FF00BDA5BD /* FNLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNLayer.m; sourceTree = "<group>"; };
+		BA6082B01A1ED0FF00BDA5BD /* FNLayer1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FNLayer1.h; sourceTree = "<group>"; };
+		BA6082B11A1ED0FF00BDA5BD /* FNLayer1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FNLayer1.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -687,8 +687,8 @@
 		BA1D6DDA1A158B2A0010B388 /* FNChart */ = {
 			isa = PBXGroup;
 			children = (
-				BA6082B01A1ED0FF00BDA5BD /* FNLayer.h */,
-				BA6082B11A1ED0FF00BDA5BD /* FNLayer.m */,
+				BA6082B01A1ED0FF00BDA5BD /* FNLayer1.h */,
+				BA6082B11A1ED0FF00BDA5BD /* FNLayer1.m */,
 				BA1D6DDB1A158B540010B388 /* FNLineChart.h */,
 				BA1D6DDC1A158B540010B388 /* FNLineChart.m */,
 			);
@@ -832,7 +832,7 @@
 				BA17438D1A11F6B20080C026 /* FSLineViewController.m in Sources */,
 				BA17440C1A1200BE0080C026 /* NSNumber+MK_Manipulation.m in Sources */,
 				BA1744171A1200BE0080C026 /* NSString+MK_UUID.m in Sources */,
-				BA6082B21A1ED0FF00BDA5BD /* FNLayer.m in Sources */,
+				BA6082B21A1ED0FF00BDA5BD /* FNLayer1.m in Sources */,
 				BA17440A1A1200BE0080C026 /* NSNumber+MK_Creation.m in Sources */,
 				BA1744121A1200BE0080C026 /* NSString+MK_Base64.m in Sources */,
 				BA1743FB1A1200BE0080C026 /* NSMutableArray+MK_Misc.m in Sources */,
